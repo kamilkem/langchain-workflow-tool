@@ -6,7 +6,7 @@
   "steps": {
     "keyword": {
       "type": "user_input",
-      "value": "What is space?"
+      "value": "What are LLM's?"
     },
     "search_keyword": {
       "type": "perform_internet_search",
@@ -22,24 +22,46 @@
           "description": "First extracted url"
         },
         {
-          "name": "first_title",
+          "name": "second_url",
           "description":"First extracted title"
+        },
+        {
+          "name": "third_url",
+          "description": "First extracted url"
         }
       ]
     },
-    "content_writer": {
-      "type": "ai_generate_text",
-      "human": "Content: {steps>extract_urls>result>first_title}. Help writing SEO optimized conversion focused copy.",
-      "system": "You are a content marketer."
-    },
-    "scrape_contents": {
+    "scrape_first_url": {
       "type": "scrape_webpage",
       "url": "{steps>extract_urls>result>first_url}"
     },
-    "extract_h1s_from_url": {
+    "extract_h1s_from_first_url": {
       "type": "ai_generate_text",
-      "human": "Content: {steps>scrape_contents>result}. Extract content of first h1 tag.",
-      "system": "You are a webpage content extractor. Your job is to extract all content of required html tags."
+      "human": "Content: {steps>scrape_first_url>result}. Extract a list of h1 headings from the content.",
+      "system": "You are a heading extractor bot. Your job is to extract all h1 headings from a piece of content. As answer, provide only h1 tag, removing all attributes from it."
+    },
+    "scrape_second_url": {
+      "type": "scrape_webpage",
+      "url": "{steps>extract_urls>result>second_url}"
+    },
+    "extract_h1s_from_second_url": {
+      "type": "ai_generate_text",
+      "human": "Content: {steps>scrape_second_url>result}. Extract a list of h1 headings from the content.",
+      "system": "You are a heading extractor bot. Your job is to extract all h1 headings from a piece of content. As answer, provide only h1 tag, removing all attributes from it."
+    },
+    "scrape_third_url": {
+      "type": "scrape_webpage",
+      "url": "{steps>extract_urls>result>third_url}"
+    },
+    "extract_h1s_from_third_url": {
+      "type": "ai_generate_text",
+      "human": "Content: {steps>scrape_third_url>result}. Extract a list of h1 headings from the content.",
+      "system": "You are a heading extractor bot. Your job is to extract all h1 headings from a piece of content. As answer, provide only h1 tag, removing all attributes from it."
+    },
+    "recommend_page_type": {
+      "type": "ai_generate_text",
+      "human": "First page h1s: {steps>extract_h1s_from_first_url>result}, Second page h1s: {steps>extract_h1s_from_second_url>result}, Third page h1s: {steps>extract_h1s_from_third_url>result}. Based on comparing the h1 headings, recommend whether to create a landing page or blog post for the keyword.",
+      "system": "You are a content strategy expert. Your job is to recommend either creating a landing page or blog post based on comparing h1 headings from top ranking pages."
     }
   }
 }

@@ -1,6 +1,8 @@
 import re
 
 from langchain_community.document_loaders import AsyncChromiumLoader
+from langchain_community.document_transformers import BeautifulSoupTransformer
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from ai_manager import AiManager
 
@@ -24,7 +26,12 @@ class UserInputResolver(Resolver):
 class ScrapeWebpageResolver(Resolver):
     def resolve(self, step: dict, context: dict):
         loader = AsyncChromiumLoader([enrich_string_with_context(step['url'], context)])
-        return loader.load()
+        html = loader.load()
+
+        splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(chunk_size=10000)
+        splits = splitter.split_documents(html)
+
+        return splits[0]
 
     def get_type(self) -> str:
         return 'scrape_webpage'
@@ -95,7 +102,7 @@ def get_resolvers() -> list[Resolver]:
 
 
 def enrich_string_with_context(string: str, context: dict) -> str:
-    extracted_properties = re.findall('{(.*)}', string)
+    extracted_properties = re.findall('\{([^}]+)\}', string)
     enriched_properties = {}
     for prop in extracted_properties:
         keys = prop.split('>')

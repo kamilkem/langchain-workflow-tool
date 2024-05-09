@@ -1,5 +1,6 @@
 from langchain.agents import AgentExecutor, Tool, create_tool_calling_agent
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
+from langchain_core.output_parsers import StrOutputParser
 from langchain_community.utilities import SerpAPIWrapper
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
@@ -47,7 +48,7 @@ class AiManager:
                 ('human', '{human}')
             ])
         if not output_parser:
-            return prompt | self.llm
+            output_parser = StrOutputParser()
 
         return prompt | self.llm | output_parser
 
