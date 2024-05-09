@@ -1,0 +1,45 @@
+{
+  "defaults": {
+    "model_name": "gpt-3.5-turbo-1106",
+    "temperature": 0.7
+  },
+  "steps": {
+    "keyword": {
+      "type": "user_input",
+      "value": "What is space?"
+    },
+    "search_keyword": {
+      "type": "perform_internet_search",
+      "query": "{steps>keyword>result}",
+      "pages": 1
+    },
+    "extract_urls":{
+      "type": "extract_data_from_text",
+      "text": "{steps>search_keyword>result}",
+      "schema": [
+        {
+          "name": "first_url",
+          "description": "First extracted url"
+        },
+        {
+          "name": "first_title",
+          "description":"First extracted title"
+        }
+      ]
+    },
+    "content_writer": {
+      "type": "ai_generate_text",
+      "human": "Content: {steps>extract_urls>result>first_title}. Help writing SEO optimized conversion focused copy.",
+      "system": "You are a content marketer."
+    },
+    "scrape_contents": {
+      "type": "scrape_webpage",
+      "url": "{steps>extract_urls>result>first_url}"
+    },
+    "extract_h1s_from_url": {
+      "type": "ai_generate_text",
+      "human": "Content: {steps>scrape_contents>result}. Extract content of first h1 tag.",
+      "system": "You are a webpage content extractor. Your job is to extract all content of required html tags."
+    }
+  }
+}
