@@ -1,7 +1,6 @@
 import re
 
 from langchain_community.document_loaders import AsyncChromiumLoader
-from langchain_community.document_transformers import BeautifulSoupTransformer
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from ai_manager import AiManager
@@ -28,7 +27,7 @@ class ScrapeWebpageResolver(Resolver):
         loader = AsyncChromiumLoader([enrich_string_with_context(step['url'], context)])
         html = loader.load()
 
-        splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(chunk_size=10000)
+        splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(chunk_size=15000)
         splits = splitter.split_documents(html)
 
         return splits[0]
@@ -59,11 +58,13 @@ class PerformInternetSearchResolver(Resolver):
         manager = AiManager(model_name=model_name, temperature=temperature)
         manager.add_search_tool()
         input = enrich_string_with_context(step['query'], context)
+        pages = step['pages']
 
         return manager.answer(
             'Query: ' + input,
             'You are like web browser. '
-            'Your job is to present links from results from provided query.'
+            'Your job is to present links from results from provided using search tool. '
+            f'Give exactly {pages * 10} results.'
         )['output']
 
     def get_type(self) -> str:
@@ -76,7 +77,7 @@ class ExtractDataFromTextResolver(Resolver):
         temperature = float(0)
 
         manager = AiManager(model_name=model_name, temperature=temperature)
-        manager.add_schema(step['schema'])
+        manager.add_response_schema(step['schema'])
         input = enrich_string_with_context(step['text'], context)
 
         return manager.answer(

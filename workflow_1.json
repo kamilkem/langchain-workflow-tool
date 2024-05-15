@@ -1,0 +1,39 @@
+{
+  "defaults": {
+    "model_name": "gpt-3.5-turbo-1106",
+    "temperature": 0.7
+  },
+  "steps": {
+    "first_url": {
+      "type": "user_input",
+      "value": "https://www.lazienkaplus.pl/pl/tres-loft-colors-bateria-wannowo-prysznicowa-3-otworowa-czarny-mat-20016203nm,502584,120,i/"
+    },
+    "second_url": {
+      "type": "user_input",
+      "value": "https://www.lazienkaplus.pl/pl/tres-loft-colors-bateria-wannowo-prysznicowa-3-otworowa-czarny-mat-20016201nm,502588,120,i/"
+    },
+    "scrape_first_url": {
+      "type": "scrape_webpage",
+      "url": "{steps>first_url>result}"
+    },
+    "scrape_second_url": {
+      "type": "scrape_webpage",
+      "url": "{steps>second_url>result}"
+    },
+    "summarize_first_product": {
+      "type": "ai_generate_text",
+      "human": "Content: {steps>scrape_first_url>result}, summarize details about this product.",
+      "system": "Your job is to provide necessary information about given product."
+    },
+    "summarize_second_product": {
+      "type": "ai_generate_text",
+      "human": "Content: {steps>scrape_second_url>result}, summarize details about this product.",
+      "system": "Your job is to provide necessary information about given product."
+    },
+    "compare": {
+      "type": "ai_generate_text",
+      "human": "First product: {steps>summarize_first_product>result}, Second product: {steps>summarize_second_product>result}.",
+      "system": "You are product comparator. Provide these two products providing their specification and differences."
+    }
+  }
+}

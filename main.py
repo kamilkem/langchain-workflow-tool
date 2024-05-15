@@ -5,7 +5,7 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 
-with open("workflow.json", "r") as file:
+with open("workflow_1.json", "r") as file:
     config = json.load(file)
 
 runner = Runner(config)

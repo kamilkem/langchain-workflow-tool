@@ -6,7 +6,7 @@
   "steps": {
     "keyword": {
       "type": "user_input",
-      "value": "What are LLM's?"
+      "value": "What is space?"
     },
     "search_keyword": {
       "type": "perform_internet_search",
@@ -16,18 +16,18 @@
     "extract_urls":{
       "type": "extract_data_from_text",
       "text": "{steps>search_keyword>result}",
-      "schema": [
+      "result_schema": [
         {
           "name": "first_url",
           "description": "First extracted url"
         },
         {
           "name": "second_url",
-          "description":"First extracted title"
+          "description":"Second extracted url"
         },
         {
           "name": "third_url",
-          "description": "First extracted url"
+          "description": "Third extracted url"
         }
       ]
     },
